@@ -46,7 +46,7 @@ __pragma(warning(disable : 4239))
     namespace airlib
     {
 
-        struct RpcLibClientBase::impl
+        struct RpcLibClientBase::impl  // Rpc server init with port and ip address
         {
             impl(const string& ip_address, uint16_t port, float timeout_sec)
                 : client(ip_address, port)

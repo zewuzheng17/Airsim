@@ -3,79 +3,93 @@ import numpy as np
 import time
 from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
+import copy
 
+"""
+gym environment for car intercepting based on airsim
 
+action = {"Escaper","Catcher"}
+brake = (0, 1), throttle = (0, 1), steering = (-0.5 - 0.5)
+
+observation = a dict 
+
+with keys Escaper and Catcher, each has following attributes.
+position: x_val, y_val, z_val
+linear_acceleration: x_val, y_val, z_val
+linear_velocity: x_val, y_val, z_val
+angular_accerleration: x_val, y_val, z_val
+angular_velocity: x_val, y_val, z_val
+orientation: w_val, x_val, y_val, z_val
+
+with key:
+goal_position: x_val, y_val, z_val
+"""
 class AirSimCarInterceptEnv(AirSimEnv):
-    def __init__(self, ip_address):
+    def __init__(self, ip_address, self_control_escaper, self_control_catcher):
         super().__init__((84, 84, 1))  # image shape for default gym env
         self.start_ts = 0
 
+        ## self control setup
+        self.control_escaper = self_control_escaper
+        self.control_catcher = self_control_catcher
+
         ## observation 
-        self.car_state = {}   
+        self.car_state = {
+            "Escaper" : CarState(),
+            "Catcher" : CarState()
+        } 
 
-        ## action space
-        self.action_space = spaces.Discrete(6)
-
-        self.cars = airsim.CarClient(ip=ip_address)
+        ## action
         self.car_controls = {
-            "red_car":airsim.CarControls(),
-            "blue_car":airsim.CarControls()
+            "Escaper":airsim.CarControls(),
+            "Catcher":airsim.CarControls()
         }
+
+        ## car client, connect to airsim unreal simulator
+        self.cars = airsim.CarClient(ip=ip_address)
+
 
     # reset to origin state
     def _setup_car(self):
         self.cars.reset()
-        self.cars.enableApiControl(True,"Catcher")
-        self.cars.enableApiControl(True,"Escaper")
-        self.cars.armDisarm(True,"Catcher")
-        self.cars.armDisarm(True,"Escaper")
+        self.cars.enableApiControl(True,"Catcher") if not self.control_catcher else self.cars.enableApiControl(False,"Catcher")
+        self.cars.enableApiControl(True,"Escaper") if not self.control_escaper else self.cars.enableApiControl(False,"Escaper")
+        self.cars.armDisarm(True,"Catcher") if not self.control_catcher else self.cars.enableApiControl(False,"Catcher")
+        self.cars.armDisarm(True,"Escaper") if not self.control_escaper else self.cars.enableApiControl(False,"Escaper")
         time.sleep(0.01)
 
     def __del__(self):
         self.cars.reset()
 
+    ## initialize action
+    def _init_action(self):
+        for car_style in self.car_controls.keys():
+            self.car_controls[car_style].throttle = 1
+            self.car_controls[car_style].brake = 0
+            self.car_controls[car_style].steering = 0
+        return self.car_controls
+
     # do action
     def _do_action(self, action):
-        for car_style in action.keys():
-            self.car_controls[car_style].brake = 0
-            self.car_controls[car_style].throttle = 1
-            if action[car_style] == 0:
-                self.car_controls[car_style].throttle = 0
-                self.car_controls[car_style].brake = 1
-            elif action[car_style] == 1:
-                self.car_controls[car_style].steering = 0
-            elif action[car_style] == 2:
-                self.car_controls[car_style].steering = 0.5
-            elif action[car_style] == 3:
-                self.car_controls[car_style].steering = -0.5
-            elif action[car_style] == 4:
-                self.car_controls[car_style].steering = 0.25
-            else:
-                self.car_controls[car_style].steering = -0.25
-
-        self.cars.setCarControls(self.car_controls["red_car"], "Escaper") 
-        self.cars.setCarControls(self.car_controls["blue_car"], "Catcher") 
+        self.cars.setCarControls(action["Escaper"], "Escaper") 
+        self.cars.setCarControls(action["Catcher"], "Catcher") 
 
     # get observation
+    def _get_car_state(self):
+        for car_role in ["Escaper", "Catcher"]:
+            self.car_state[car_role].position = self.cars.simGetObjectPose(car_role).position
+            self.car_state[car_role].linear_acceleration = self.cars.getCarState(car_role).kinematics_estimated.linear_acceleration  
+            self.car_state[car_role].linear_velocity = self.cars.getCarState(car_role).kinematics_estimated.linear_velocity
+            self.car_state[car_role].angular_accerleration = self.cars.getCarState(car_role).kinematics_estimated.angular_acceleration
+            self.car_state[car_role].angular_velocity = self.cars.getCarState(car_role).kinematics_estimated.angular_velocity
+            self.car_state[car_role].orientation = self.cars.getCarState(car_role).kinematics_estimated.orientation
+        return self.car_state
+
     def _get_obs(self):
-        self.car_state["red_car"] = self.cars.simGetObjectPose("Escaper")
-        self.car_state["blue_car"] = self.cars.simGetObjectPose("Catcher")
+        obs = self._get_car_state()
+        obs["goal_position"] = self.cars.simGetObjectPose("Goal").position
+        return obs
 
-    """
-    simGetObjectPose(object_name)[source]
-    Parameters
-    object_name (str) – Object to get the Pose of
-
-    Returns
-    Return type
-    Pose
-
-    class airsim.types.Pose(position_val=None, orientation_val=None)[source]
-    containsNan()[source]
-    static nanPose()[source]
-    orientation= <Quaternionr> {   'w_val': 1.0,     'x_val': 0.0,     'y_val': 0.0,     'z_val': 0.0}
-    position= <Vector3r> {   'x_val': 0.0,     'y_val': 0.0,     'z_val': 0.0}
-    """
     # compute reward
     def _compute_reward(self):
         reward = 0
@@ -84,32 +98,52 @@ class AirSimCarInterceptEnv(AirSimEnv):
     # compute ending condition
     def _if_end(self):
         done = False
-        red_car_position = self.car_state["red_car"].position
-        blue_car_position = self.car_state["blue_car"].position
+        info = False
+        escaper_position = self.car_state["Escaper"].position
+        catcher_position = self.car_state["Catcher"].position
         goal_position = self.cars.simGetObjectPose("Goal").position
-        r_b_distance = np.linalg.norm([red_car_position.x_val-blue_car_position.x_val, \
-                red_car_position.y_val-blue_car_position.y_val,red_car_position.z_val-blue_car_position.z_val])
-        r_g_distance = np.linalg.norm([red_car_position.x_val-goal_position.x_val, \
-                red_car_position.y_val-goal_position.y_val,red_car_position.z_val-goal_position.z_val])
+        r_b_distance = np.linalg.norm([escaper_position.x_val-catcher_position.x_val, \
+                escaper_position.y_val-catcher_position.y_val,escaper_position.z_val-catcher_position.z_val])
+        r_g_distance = np.linalg.norm([escaper_position.x_val-goal_position.x_val, \
+                escaper_position.y_val-goal_position.y_val,escaper_position.z_val-escaper_position.z_val])
+
         if r_b_distance < 5:
             # Catcher catch escaper
             done = True
-        elif red_car_position.z_val > 5 or blue_car_position.z_val > 5:
+            info = "Being caught"
+        elif escaper_position.z_val > 5:
             # one of the car fall out of playground
             done = True
-        elif r_g_distance < 5:
+            info = "escaper fall off playground"
+        elif catcher_position.z_val > 5:
+            # one of the car fall out of playground
             done = True
-        return done
+            info = "catcher fall off playground"
+        elif r_g_distance < 15:
+            done = True
+            info = "Reach goal"
+        return info, done
 
     def step(self, action):
         self._do_action(action)
         obs = self._get_obs()
+        info, done = self._if_end()
         reward = self._compute_reward()
-        done = self._if_end()
-        info = None
-        return obs, reward, done, info
+        return copy.deepcopy(obs), reward, done, info
 
     def reset(self):
         self._setup_car()
-        self._do_action({"red_car":1,"blue_car":1})
-        return self._get_obs()
+        action = self._init_action()
+        self._do_action(action)
+        done = False
+        return copy.deepcopy(self._get_obs()), copy.deepcopy(action), done
+
+
+class CarState():
+    position = airsim.Vector3r()
+    orientation = airsim.Quaternionr()
+    linear_velocity = airsim.Vector3r()
+    angular_velocity = airsim.Vector3r()
+    linear_acceleration = airsim.Vector3r()
+    angular_accerleration = airsim.Vector3r()
+
