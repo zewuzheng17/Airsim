@@ -23,3 +23,9 @@
  
 4. Use environment from unreal marketplace and add airsim as plugin
     - https://zhuanlan.zhihu.com/p/271953448
+
+### Car intercept project
+    - link: https://pan.baidu.com/s/13iTxV4SKaksK9brcbeJs2A 提取码：zzw1
+
+### Airsim python client
+    - prerequisite: numpy,
