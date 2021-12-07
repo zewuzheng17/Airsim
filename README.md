@@ -2,7 +2,7 @@
 
 ### Airsim Installation
 
-1. install visual studio 2019 
+1. install visual studio 2019 https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community&rel=17
     - select 使用C++的桌面开发” under 工作负荷
     - select “Windows 10 SDK 10.0.18362”
     - select 使用.NET桌面开发
