@@ -119,11 +119,11 @@ class AirSimCarInterceptEnv(AirSimEnv):
             # Catcher catch escaper
             done = True
             info = "Being caught"
-        elif escaper_position.z_val > 5:
+        elif escaper_position.z_val > 10:
             # one of the car fall out of playground
             done = True
             info = "escaper fall off playground"
-        elif catcher_position.z_val > 5:
+        elif catcher_position.z_val > 10:
             # one of the car fall out of playground
             done = True
             info = "catcher fall off playground"
