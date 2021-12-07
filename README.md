@@ -11,9 +11,7 @@
 2. install Unreal engine https://www.unrealengine.com/zh-CN/
     - you need to sign up for an epic game account
     - install epic games
- 
-![image](https://user-images.githubusercontent.com/85209880/144985961-1da6be19-5e89-4fd1-a2c2-f09471875dcd.png)
-
+ <img width="150" height="150" src="https://user-images.githubusercontent.com/85209880/144985961-1da6be19-5e89-4fd1-a2c2-f09471875dcd.png"/>
     - install unreal engine 
 
 ![image](https://user-images.githubusercontent.com/85209880/144958513-2d4bb89b-0682-4177-a71c-4dd4e61806bb.png)
