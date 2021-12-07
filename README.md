@@ -11,8 +11,13 @@
 2. install Unreal engine https://www.unrealengine.com/zh-CN/
     - you need to sign up for an epic game account
     - install epic games
+ 
+![image](https://user-images.githubusercontent.com/85209880/144985961-1da6be19-5e89-4fd1-a2c2-f09471875dcd.png)
+
     - install unreal engine 
+
 ![image](https://user-images.githubusercontent.com/85209880/144958513-2d4bb89b-0682-4177-a71c-4dd4e61806bb.png)
+
     - select version 4.26
     
 3. install Airsim
