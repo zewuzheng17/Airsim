@@ -28,4 +28,4 @@
     - link: https://pan.baidu.com/s/13iTxV4SKaksK9brcbeJs2A 提取码：zzw1
 
 ### Airsim python client
-    - prerequisite: numpy,
+    - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
