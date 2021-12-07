@@ -1,9 +1,11 @@
 import airsim
+from airgym.envs.airsim_env import AirSimEnv
+
+import copy
 import numpy as np
 import time
 from gym import spaces
-from airgym.envs.airsim_env import AirSimEnv
-import copy
+
 
 """
 gym environment for car intercepting based on airsim
@@ -28,7 +30,6 @@ class AirSimCarInterceptEnv(AirSimEnv):
     def __init__(self, ip_address, self_control_escaper, self_control_catcher):
         super().__init__((84, 84, 1))  # image shape for default gym env
         self.start_ts = 0
-
         ## self control setup
         self.control_escaper = self_control_escaper
         self.control_catcher = self_control_catcher
@@ -70,9 +71,9 @@ class AirSimCarInterceptEnv(AirSimEnv):
         return self.car_controls
 
     # do action
-    def _do_action(self, action):
-        self.cars.setCarControls(action["Escaper"], "Escaper") 
+    def _do_action(self, action): 
         self.cars.setCarControls(action["Catcher"], "Catcher") 
+        self.cars.setCarControls(action["Escaper"], "Escaper")
 
     # get observation
     def _get_car_state(self):
@@ -83,6 +84,13 @@ class AirSimCarInterceptEnv(AirSimEnv):
             self.car_state[car_role].angular_accerleration = self.cars.getCarState(car_role).kinematics_estimated.angular_acceleration
             self.car_state[car_role].angular_velocity = self.cars.getCarState(car_role).kinematics_estimated.angular_velocity
             self.car_state[car_role].orientation = self.cars.getCarState(car_role).kinematics_estimated.orientation
+            img_response = self.cars.simGetImages([airsim.ImageRequest("0", airsim.ImageType.Scene, False, False),
+                                            airsim.ImageRequest("0", airsim.ImageType.DepthVis, False, False)], car_role)
+            img_rgb = np.fromstring(img_response[0].image_data_uint8, dtype=np.uint8) 
+            self.car_state[car_role].img_rgb = img_rgb.reshape(img_response[0].height, img_response[0].width, 3)
+            img_depth = np.fromstring(img_response[1].image_data_uint8, dtype=np.uint8) 
+            self.car_state[car_role].img_depth = img_depth.reshape(img_response[1].height, img_response[1].width, 3)
+            self.car_state[car_role].lidar_data = self.cars.getLidarData("Lidar1", car_role)
         return self.car_state
 
     def _get_obs(self):
@@ -125,7 +133,8 @@ class AirSimCarInterceptEnv(AirSimEnv):
         return info, done
 
     def step(self, action):
-        self._do_action(action)
+        actions = copy.deepcopy(action)
+        self._do_action(actions)
         obs = self._get_obs()
         info, done = self._if_end()
         reward = self._compute_reward()
@@ -146,4 +155,7 @@ class CarState():
     angular_velocity = airsim.Vector3r()
     linear_acceleration = airsim.Vector3r()
     angular_accerleration = airsim.Vector3r()
+    img_rgb = None
+    img_depth = None
+    lidar_data = None
 

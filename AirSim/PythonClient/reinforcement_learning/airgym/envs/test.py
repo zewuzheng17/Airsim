@@ -1,8 +1,13 @@
 import airgym
+from car_lidar import  LidarTest
+from xbox.Getcmd import Getcmd
 import gym
 import numpy as np
 import copy
+import time
+import os
 
+import airsim
 """
 gym environment for car intercepting based on airsim
 
@@ -26,20 +31,38 @@ and with key:
 goal_position: x_val, y_val, z_val
   
 """
+start_t = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())
+path = "D:/Qiyuan/Airsim_learning/record_images/" + start_t
+os.system('mkdir "%s"' %path) 
+lidarTest = LidarTest()
+GetCmd = Getcmd()
 
 def main():
-    env = gym.make("airsim-car-intercept-v0", ip_address="127.0.0.1", self_control_escaper = True, self_control_catcher = False)    
+    env = gym.make("airsim-car-intercept-v0", ip_address="127.0.0.1", self_control_escaper = False, self_control_catcher = False)    
     obs, action, done = env.reset()
     pre_obs = obs
     skip_t = 0 # simmulation step to be skipped
-    while not done:
-        obs, rewards, done, info = env.step(action)
-        if skip_t % 30 == 0 and (obs and pre_obs is not None):      
-            action["Catcher"].steering = Propotional_navi(obs, pre_obs, 70)
-            skip_t = 0
-            pre_obs = copy.deepcopy(obs)
-        skip_t += 1       
-    print(info)
+    while GetCmd.end != 1:
+        if GetCmd.reset:
+             obs, action, done = env.reset()
+        action = GetCmd.do_action(action)
+        while not done:
+            obs, rewards, done, info = env.step(GetCmd.do_action(action))
+            # airsim.write_png(path + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime()) + "_" + str(int(time.time()*1000)%1000) + ".png", obs["Escaper"].img_rgb)
+        
+            # ''' lidar'''
+            
+            # try:
+            #     lidarTest.execute()
+            # finally:
+            #     lidarTest.stop()
+            
+            if skip_t % 1 == 0 and (obs and pre_obs is not None):      
+                action["Catcher"].steering = Propotional_navi(obs, pre_obs, 60)
+                skip_t = 0
+                pre_obs = copy.deepcopy(obs)
+            skip_t += 1       
+        print(info)
 
 def Propotional_navi(cur_obs, pre_obs, K) -> float: 
     cur_relative_vec = cur_obs["Escaper"].position - cur_obs["Catcher"].position 
