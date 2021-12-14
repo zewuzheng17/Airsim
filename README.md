@@ -40,4 +40,4 @@
     - run pip install -e . (install local airgym package in python)
     
 ### settings.json
-    - put this file into 文档/Airsim/ 
+    - put this file into 此电脑/文档/Airsim/ 
