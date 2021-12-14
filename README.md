@@ -34,9 +34,9 @@
 
 ### Airsim python client
     - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
-    - cd Airsm/Airsim/pythonClient
+    - cd Airsm/Airsim/PythonClient
     - run pip install -e . (install local airsim package in python)
-    - cd Airsim/Airsim/pythonClient/reinforcementlearning/
+    - cd Airsim/Airsim/pythonClient/reinforcement_learning/
     - run pip install -e . (install local airgym package in python)
     
 ### settings.json
