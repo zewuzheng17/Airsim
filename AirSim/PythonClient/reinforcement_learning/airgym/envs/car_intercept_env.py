@@ -115,7 +115,7 @@ class AirSimCarInterceptEnv(AirSimEnv):
         r_g_distance = np.linalg.norm([escaper_position.x_val-goal_position.x_val, \
                 escaper_position.y_val-goal_position.y_val,escaper_position.z_val-escaper_position.z_val])
 
-        if r_b_distance < 5:
+        if r_b_distance < 8:
             # Catcher catch escaper
             done = True
             info = "Being caught"
@@ -138,6 +138,8 @@ class AirSimCarInterceptEnv(AirSimEnv):
         obs = self._get_obs()
         info, done = self._if_end()
         reward = self._compute_reward()
+        if done:
+            self.cars.simPrintLogMessage(info, message_param='', severity=3)
         return copy.deepcopy(obs), reward, done, info
 
     def reset(self):
