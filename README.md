@@ -34,3 +34,6 @@
 
 ### Airsim python client
     - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
+    
+### settings.json
+    - put this file into 文档/Airsim/ 
