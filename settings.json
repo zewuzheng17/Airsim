@@ -1,0 +1,83 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "Car",
+  "ViewMode":"",
+  "ClockSpeed": 1,
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 1920,
+        "Height": 1080
+      }
+    ]},
+  "OriginGeopoint": {
+    "Latitude": 47.641468,
+    "Longitude": -122.140165,
+    "Altitude": 122
+  },
+  "PawnPaths": {
+                "CatcherCar":{"PawnBP":"Class'/AirSim/VehicleAdv/SUV/SuvCarPawn.SuvCarPawn_C'"},
+                "EscaperCar":{"PawnBP":"Class'/Game/SUV/SuvCarPawn.SuvCarPawn_C'"}
+                },
+  "ExternalCameras": {
+    "FixedCamera1": {
+      "CaptureSettings": [
+        {
+          "ImageType": 0,
+          "Width": 1920,
+          "Height": 1080}],
+      "X": -10, "Y": 150, "Z": -170,
+      "Pitch": -90, "Roll": 0, "Yaw": 0
+    }
+  },
+  "Vehicles": {
+    "Escaper": {
+      "VehicleType": "PhysXCar",
+      "DefaultVehicleState": "",
+      "AutoCreate": true,
+      "IsFpvVehicle": true,
+      "PawnPath": "EscaperCar", 
+      "EnableCollisionPassthrogh": false,
+      "EnableCollisions": true,
+      "AllowAPIAlways": true,
+      "RemoteControlID":-1,
+      "X": 0, "Y": 0, "Z": 0,
+      "Pitch": 0, "Roll": 0, "Yaw": 90,
+      "Sensors": {    "Lidar1": {
+        "SensorType": 6,
+        "Enabled" : true
+      } }
+    },
+    "Catcher": {
+      "VehicleType": "PhysXCar",
+      "IsFpvVehicle": false,
+      "DefaultVehicleState": "",
+      "AutoCreate": true,
+      "PawnPath": "CatcherCar", 
+      "EnableCollisionPassthrogh": false,
+      "EnableCollisions": true,
+      "RemoteControlID":1,
+      "AllowAPIAlways": true,
+      "X": 0, "Y": 210, "Z": 0,
+      "Pitch": 0, "Roll": 0, "Yaw": -90,
+      "Sensors": {    "Lidar1": {
+        "SensorType": 6,
+        "Enabled" : true
+      } }
+    }},
+  "SubWindows": [
+    {"WindowID": 0, "CameraName": "", "ImageType": 0, "VehicleName": "Escaper", "Visible": false, "External": false},
+    {"WindowID": 1, "CameraName": "FixedCamera1", "ImageType": 0, "VehicleName": "", "Visible": false, "External": true},
+    {"WindowID": 2, "CameraName": "", "ImageType": 0, "VehicleName": "Catcher", "Visible": false, "External": false}
+  ],
+  "Recording": {
+    "RecordOnMove": false,
+    "RecordInterval": 0.001,
+    "Folder": "D:/Qiyuan/Airsim_learning/record_images",
+    "Enabled": false,
+    "Cameras": [
+        { "CameraName": "0", "ImageType": 0, "PixelsAsFloat": false,  "VehicleName": "Escaper", "Compress": true }
+    ]
+  }
+}
