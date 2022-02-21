@@ -52,16 +52,11 @@ class AirSimCarInterceptEnv(AirSimEnv):
 
     # reset to origin state
     def _setup_car(self):
-        self.cars.reset()
         self.cars.enableApiControl(True,"Catcher") if not self.control_catcher else self.cars.enableApiControl(False,"Catcher")
         self.cars.enableApiControl(True,"Escaper") if not self.control_escaper else self.cars.enableApiControl(False,"Escaper")
         self.cars.armDisarm(True,"Catcher") if not self.control_catcher else self.cars.enableApiControl(False,"Catcher")
         self.cars.armDisarm(True,"Escaper") if not self.control_escaper else self.cars.enableApiControl(False,"Escaper")
         time.sleep(0.01)
-        print('before add')
-        ADD_pose = airsim.Pose(airsim.Vector3r(0, 20, 0), airsim.to_quaternion(0, 0, 0))
-        created = self.cars.simAddVehicle(vehicle_name="ADDED", vehicle_type="physxcar", pose=ADD_pose)
-        print("car created?", created)
 
     def __del__(self):
         self.cars.reset()
@@ -154,6 +149,18 @@ class AirSimCarInterceptEnv(AirSimEnv):
         done = False
         return copy.deepcopy(self._get_obs()), copy.deepcopy(action), done
 
+    def add_vehicle(self, vehicle_name, position, vehicle_type):
+        if vehicle_name in self.cars.listVehicles():
+            print("warning!! car: ", vehicle_name, "exist, destroying it!")
+            self.cars.simDestroyObject(vehicle_name)
+        created = self.cars.simAddVehicle(vehicle_name=vehicle_name, vehicle_type=vehicle_type, pose=position)
+        print(vehicle_name," car created?", created)
+
+    def del_vehicle(self, vehicle_name):
+        if vehicle_name not in self.cars.listVehicles():
+            print("warning!! car: ", vehicle_name, "not exist! wont delete anything!")
+            return
+        self.cars.simDestroyObject(vehicle_name)
 
 class CarState():
     position = airsim.Vector3r()

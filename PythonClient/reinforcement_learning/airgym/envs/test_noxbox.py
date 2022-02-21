@@ -28,7 +28,10 @@ orientation: w_val, x_val, y_val, z_val
 
 and with key:
 goal_position: x_val, y_val, z_val
-  
+
+function:
+add_vehicle(vehicle_name, position:airsim.Pose, vehicle_type: "physxcar" or "simpleflight")
+del_vehicle(vehicle_name)
 """
 start_t = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())
 path = "D:/Qiyuan/Airsim_learning/record_images/" + start_t
@@ -39,17 +42,19 @@ def main():
     env = gym.make("airsim-car-intercept-v0", ip_address="127.0.0.1", self_control_escaper = True, self_control_catcher = True)    
     obs, action, done = env.reset()
     pre_obs = obs
-    skip_t = 0 # simmulation step to be skipped
+    t = 0 # simmulation step 
 
-    obs, action, done = env.reset()
     while not done:
-        obs, rewards, done, info = env.step(action)     
-        if skip_t % 1 == 0 and (obs and pre_obs is not None):      
-            action["Catcher"].steering = Propotional_navi(obs, pre_obs, 60)
-            skip_t = 0
-            pre_obs = copy.deepcopy(obs)
-        skip_t += 1       
-        print(info)
+        obs, rewards, done, info = env.step(action)    
+        if t == 10: 
+            env.add_vehicle("added", airsim.Pose(airsim.Vector3r(0, 20, 6.06), airsim.to_quaternion(0, 0, 0)), "physxcar")
+        if t == 20:
+            env.del_vehicle("added")
+        action["Catcher"].steering = Propotional_navi(obs, pre_obs, 60)
+        pre_obs = copy.deepcopy(obs)
+        t += 1 
+    print(info)      
+        
 
 def Propotional_navi(cur_obs, pre_obs, K) -> float: 
     cur_relative_vec = cur_obs["Escaper"].position - cur_obs["Catcher"].position 
