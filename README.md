@@ -41,3 +41,6 @@
     
 ### settings.json
     - put this file into 此电脑/文档/Airsim/ 
+    
+### airgym
+    - gym envs and relative files are in Airsim/PythonClient/reinforcement_learning/airgym/envs/
