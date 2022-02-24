@@ -24,7 +24,7 @@
     - open "Developer Command Prompt for VS 2019"
     - git clone https://github.com/zewuzheng17/Airsim.git(if dont work, go to https://github.com/zewuzheng17/Airsim and download zip file directly)
     - cd Airsim
-    - build.cmd
+    - build.cmd(you'd better use vpn)
  
 4. Use environment from unreal marketplace and add airsim as plugin
     - https://zhuanlan.zhihu.com/p/271953448
