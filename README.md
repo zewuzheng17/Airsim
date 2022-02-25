@@ -33,7 +33,7 @@
     - open unreal editor, choose CarIntercept\CarIntercept.uproject project
 
 5. Airsim python client
-    - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
+    - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python', 'gym'
     - cd Airsm/Airsim/PythonClient
     - run pip install -e . (install local airsim package in python)
     - cd Airsim/Airsim/pythonClient/reinforcement_learning/
