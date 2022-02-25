@@ -40,7 +40,7 @@
     - run pip install -e . (install local airgym package in python)
     
 6. settings.json
-    - put this file into 此电脑/文档/Airsim/ 
+    - put Airsim/settings.json into 此电脑/文档/Airsim/ 
 
 7. Go to Airsim/PythonClient/reinforcement_learning/airgym/envs/
    - test_noxbox.py (the files that test gym env with no xbox control)
