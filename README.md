@@ -43,9 +43,9 @@
     - put this file into 此电脑/文档/Airsim/ 
 
 7. Go to Airsim/PythonClient/reinforcement_learning/airgym/envs/
-   test_noxbox.py (the files that test gym env with no xbox control)
-   car_intercept_env.py (gym envs)
-   test.py (test gym with xbox control)
+   - test_noxbox.py (the files that test gym env with no xbox control)
+   - car_intercept_env.py (gym envs)
+   - test.py (test gym with xbox control)
     
 ### airgym
     - gym envs and relative files are in Airsim/PythonClient/reinforcement_learning/airgym/envs/
