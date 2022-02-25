@@ -26,21 +26,29 @@
     - cd Airsim
     - build.cmd(you'd better use vpn)
  
-4. Use environment from unreal marketplace and add airsim as plugin
-    - https://zhuanlan.zhihu.com/p/271953448
 
-### Car intercept project
+4. Car intercept project
     - link: https://pan.baidu.com/s/13iTxV4SKaksK9brcbeJs2A 提取码：zzw1
+    - unzip Carintercept
+    - open unreal editor, choose CarIntercept\CarIntercept.uproject project
 
-### Airsim python client
+5. Airsim python client
     - prerequisite: 'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
     - cd Airsm/Airsim/PythonClient
     - run pip install -e . (install local airsim package in python)
     - cd Airsim/Airsim/pythonClient/reinforcement_learning/
     - run pip install -e . (install local airgym package in python)
     
-### settings.json
+6. settings.json
     - put this file into 此电脑/文档/Airsim/ 
+
+7. Go to Airsim/PythonClient/reinforcement_learning/airgym/envs/
+   test_noxbox.py (the files that test gym env with no xbox control)
+   car_intercept_env.py (gym envs)
+   test.py (test gym with xbox control)
     
 ### airgym
     - gym envs and relative files are in Airsim/PythonClient/reinforcement_learning/airgym/envs/
+    
+### Use other environment from unreal marketplace and add airsim as plugin
+    - https://zhuanlan.zhihu.com/p/271953448
