@@ -162,6 +162,9 @@ class AirSimCarInterceptEnv(AirSimEnv):
             return
         self.cars.simDestroyObject(vehicle_name)
 
+    def spawn_object(self, name, object_name, pose, scale, physic_enabled, is_blueprint):
+        self.cars.simSpawnObject(name, object_name, pose, scale, physic_enabled, is_blueprint)
+
 class CarState():
     position = airsim.Vector3r()
     orientation = airsim.Quaternionr()

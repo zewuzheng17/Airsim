@@ -48,7 +48,9 @@ def main():
         obs, rewards, done, info = env.step(action)    
         if t == 10: 
             env.add_vehicle("added", airsim.Pose(airsim.Vector3r(0, 20, 6.06), airsim.to_quaternion(0, 0, 0)), "physxcar")
-        if t == 20:
+            # env.spawn_object("Barrier", "SM_Awning_Large", airsim.Pose(airsim.Vector3r(0, 10, 0), airsim.to_quaternion(0, 0, 0)) \
+            #     , airsim.Vector3r(1.0, 1.0, 1.0), False, False)
+        if t == 100:
             env.del_vehicle("added")
         action["Catcher"].steering = Propotional_navi(obs, pre_obs, 60)
         pre_obs = copy.deepcopy(obs)
